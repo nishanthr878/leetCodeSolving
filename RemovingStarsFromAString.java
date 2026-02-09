@@ -7,36 +7,32 @@ public class RemovingStarsFromAString {
      * @param s: a string
      * @return: the string after removing stars
      * Algorithm: Stack (Deque)
-     * Initialize an empty stack (which can be a list or array in most programming languages).
-     * Iterate through the input string s character by character.
-     * If the character is a star (*), check that the stack is not empty and pop the top character off the stack.
-     * If the character is a non-star letter, push it onto the stack.
-     * After the loop finishes, convert the list of characters in the stack into a single string.
+     *
+     * System Thinking
+     * - A tream of character
+     * - Two types of symobols: letters and *
+     * - A rule that says
+     *   - when a `*` is encountered, remove the closest non-star character to its left
+     *
+     * Time Complexity: O(n)
+     * Space Complexity: O(n)
      */
     public String removeStars(String s) {
-        Deque<Character> stack = new ArrayDeque<>();
+        ArrayDeque<Character> stack = new ArrayDeque<>();
 
-        for(char c : s.toCharArray()) {
-            if (c != '*') {
-                stack.push(c);
+        for(char ch : s.toCharArray()) {
+            if(ch == '*') {
+                stack.removeLast();
             } else {
-                if(!stack.isEmpty()) {
-                    stack.pop();
-                }
+                stack.addLast(ch);
             }
         }
 
         StringBuilder result = new StringBuilder();
-
-//        for(Iterator<Character> it = stack.descendingIterator(); it.hasNext();) {
-//            result.append(it.next());
-//        }
-
-        for(char c : stack) {
-            result.append(c);
+        for(char ch : stack) {
+            result.append(ch);
         }
-
-        return result.reverse().toString();
+        return result.toString();
     }
 
     public static void main(String[] args) {

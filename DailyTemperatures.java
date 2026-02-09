@@ -1,6 +1,29 @@
 import java.util.Stack;
 
 public class DailyTemperatures {
+    /**
+     * System Thinking (event driven)
+     * we have:
+     * - A timeline of days
+     * - Each day wants the next future day with a strictly higher temperature
+     * - once a day finds that future warms day, its done forever
+     * - this implies
+     *  - one pass
+     *  - don't revisit days unnecessarily
+     *  - remember unresolved days until something resolves them.
+     *
+     * Abstract Thinking
+     * - We are not counting days manually.
+     * - The distance comes from indices, not a running counter.
+     * - if you do that we will O(n^2) mess
+     *
+     * - Instead
+     *  - each unresolved day waits on the stack.
+     *  - when a warmer day arrives, it resolves all colder days before it.
+     *
+     * @param temperatures
+     * @return
+     */
 
     public int[] dailyTemperatures(int temperatures[]) {
         int n = temperatures.length;
