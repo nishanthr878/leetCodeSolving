@@ -1,47 +1,72 @@
 import java.util.Arrays;
 
+
 public class KokosEatingBanans {
-    public int minEatingSpeed(int[] piles, int h) {
-        int speed = 1;
-        while(true) {
-            long totalTime = 0;
-            for(int pile : piles) {
-                totalTime += (int) Math.ceil((double) pile / speed);
-            }
-            if(totalTime <= h) {
-                return speed;
-            }
-            speed++;
-        }
-    }
+    /**
+     * Abstract Thinking:
+     * - What we have
+     *  - An array of workloads
+     *  - A rate `k`.
+     *  - A function: How many hours does it take if rate = k?
+     *  - we need the smallest k such taht hours <= h.
+     *
+     *  so
+     *  - find the minimum `k` such that
+     *  `toatlHours(k) <= h`
+     *
+     *  for one pile `p`, hours = ceil(p / k)
+     *  in java
+     *  hours = (p + k - 1) / k
+     *
+     * System Thinking
+     * - totalHours(k) = sum of ceil(piles[i] / k)
+     * - if k increases, totalHours(k) decreases.
+     *
+     * Defining search space:
+     * - Lower bound of k
+     * - low = 1 (minimum speed)
+ * - Upper bound of k
+     * - high = max(piles) (if k is greater than max(piles),
+     *
+     *
+     * @param piles
+     * @param h
+     * @return
+     */
 
     public int minEatingSpeedBinarySearch(int[] piles, int h) {
-        int l = 1;
-        int r = Arrays.stream(piles).max().getAsInt();
-        int res = r;
+        int low = 1;
+        int high = 0;
 
-        while (l <= r) {
-            int mid = l + (( r - l) / 2);
+        // find maximum pile
+        for(int pile : piles) {
+            high = Math.max(high, pile);
+        }
 
-            long totalTime = 0;
+        while(low < high) {
+            int mid = low + (high - low) / 2;
+            int totalHours = 0;
+
             for(int pile : piles) {
-                totalTime += Math.ceil((double) pile / mid);
+                totalHours += (pile + mid - 1) / mid; // ceil (pile / mid)
             }
-            if(totalTime <= h) {
-                res = mid;
-                r = mid - 1;
-            } else{
-                l = mid + 1;
+
+            if(totalHours > h) {
+                // too slow -> need bigger k
+                low = mid + 1;
+            } else {
+                //works -> try smaller k
+                high = mid;
             }
         }
-        return res;
+        return low;
     }
 
     public static void main(String[] args) {
         KokosEatingBanans keb = new KokosEatingBanans();
         int[] piles = {3, 6, 7, 11};
         int h = 8;
-        System.out.println(keb.minEatingSpeed(piles, h)); // Output: 4
+
         System.out.println(keb.minEatingSpeedBinarySearch(piles, h)); // Output: 4
     }
 }

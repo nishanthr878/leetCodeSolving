@@ -1,43 +1,48 @@
 public class Search2DMatrix {
-    public boolean searchMatrixBinaraySearch(int [][] matrix, int target) {
-        int ROWS = matrix.length;
-        int COLS = matrix[0].length;
+    /**
+     * System thinking:
+     * - what we have:
+     *  - Each row is sorted
+     *  - First element of row > last element of previous row.
+     * - so if we flatten the matrix it's a global-sorted array.
+     *
+     * Abstract thinking:
+     * - Instead of thinking it as matrix
+     * - we think this as 1D sorted array with index translation
+     *
+     * so division gives:
+     * - which row block you're in
+     *
+     * Modulus gives
+     * - Position inside that row
+     *
+     * i.e row = mid / n;
+     * i.e col = mid % n;
+     *
+     * @param matrix
+     * @param target
+     * @return
+     */
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int m = matrix.length; // rows
+        int n = matrix[0].length; // columns
 
-        int topRow = 0, bottomRow = ROWS - 1;
-        while(topRow <= bottomRow) {
-            int row = topRow + ((bottomRow - topRow) / 2);
-            if(target > matrix[row][COLS - 1]) {
-                topRow = row + 1;
-            } else if(target < matrix[row][0]) {
-                bottomRow = row - 1;
-            } else {
-                break;
-            }
-        }
-        if(!(topRow <= bottomRow)){
-            return false;
-        }
-        int row = (topRow + bottomRow)  / 2;
-        int l = 0, r = COLS -1;
-        while(l <= r) {
-            int m = (l + r) /2;
-            if(target > matrix[row][m]) {
-                l = m + 1;
-            } else if(target < matrix[row][m]) {
-                r = m - 1;
-            } else {
+        int low = 0;
+        int high = m * n - 1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int row = mid / n;
+            int col = mid % n;
+
+            int value = matrix[row][col];
+
+            if (value == target) {
                 return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean searchMatrixBruteForce(int[][] matrix, int target) {
-        for(int r = 0; r < matrix.length; r++) {
-            for(int c = 0; c < matrix[r].length; c++) {
-                if(matrix[r][c] == target) {
-                    return true;
-                }
+            } else if (value < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
             }
         }
         return false;
@@ -52,6 +57,6 @@ public class Search2DMatrix {
             {23, 30, 34, 60}
         };
         int target = 60;
-        System.out.println(search.searchMatrixBinaraySearch(matrix, target)); // Output: true
+        System.out.println(search.searchMatrix(matrix, target)); // Output: true
     }
 }
